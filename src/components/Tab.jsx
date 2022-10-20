@@ -33,7 +33,7 @@ const Tab = () => {
             </ul>
             <div>
                 {activeTab === 'tab1' ? (
-                    <div className="outlet d-flex justify-content-center">
+                    <div className="justify-content-center">
                         <FirstTab
                             clean={clean}
                         />
