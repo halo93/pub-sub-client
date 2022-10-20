@@ -1,4 +1,5 @@
 // import {useEffect} from "react";
+import {encode} from '../helper/Helper'
 
 const FirstTab = ({ clean }) => {
 
@@ -9,7 +10,10 @@ const FirstTab = ({ clean }) => {
     // }, []);
 
     return (
-        <h1>Send Message tab</h1>
+        <div>
+            <h1>Send Message tab</h1>
+            <h2>{encode("Hello Word")}</h2>
+        </div>
     );
 };
 export default FirstTab;
