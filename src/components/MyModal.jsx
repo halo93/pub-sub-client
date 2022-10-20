@@ -11,7 +11,7 @@ function MyModal(props) {
     const handleSendClick = () => {
         console.log("handle click catched");
         let result = send_dummy(messageContent);
-        if(result.status == 200){
+        if(result.status === 200){
             props.onHide();
         }
         else{
