@@ -51,19 +51,9 @@ const SecondTab = ({ clean }) => {
 
             <h4>Receive New Message</h4>
 
-            <Form.Label>Message ID</Form.Label>
-            <InputGroup className="mb-3">
-                <Form.Control placeholder="Paste message ID here" aria-label="" value={messageId} onChange={e => setMessageId(e.target.value)}
-                />
-                <div style={{color: 'red'}}>
-                    {errorMessage}
-                </div>
-                <Button onClick={handleClick}>Receive</Button>
-            </InputGroup>
-
             <Form.Group className="mb-3" controlId="Form.ControlInput1">
                 <Form.Label>Message ID</Form.Label>
-                <Form.Control as="textarea" aria-label="" value={messageId} placeholder="Paste message ID here"
+                <Form.Control as="textarea" aria-label="" value={messageId} rows="10" placeholder="Paste message ID here"
                               onChange={e => setMessageId(e.target.value)}/>
                 <Form.Text id="passwordHelpBlock" muted>
                     <div style={{color: 'red'}}>

@@ -30,14 +30,18 @@ const FirstTab = ({ clean }) => {
 
     return (
         <div >
-            <h2 style={{ textAlign: 'center', margin: '0 auto', padding: '10px 10px 10px 10px',
-            }}>Sent Messages</h2>
-            <Table data={tableData} isSentTable={true}/>
-            <div className='text-right' style={{marginBottom: '10px',marginRight: '10px', textAlign:'right'}}>
+
+            <div className='text-right' style={{marginTop: '10px',marginRight: '10px', textAlign:'right'}}>
                 <Button variant="primary" onClick={() => setModalShow(true)}>
                     Publish Message
                 </Button>
             </div>
+
+
+            <h2 style={{ textAlign: 'center', margin: '0 auto', padding: '10px 10px 10px 10px',
+            }}>Sent Messages</h2>
+            <Table data={tableData} isSentTable={true}/>
+
 
             <MyModal
                 set_table={setTableData}

@@ -115,6 +115,7 @@ function bin_array_to_bipolar(binary_array){
     return bipolar_chunks_arrays_with_head;
 }
 
+/*
 function adding_headers(binary_array){
     const sequence_number_h_bits = 10;
     const data_length_h_bits = 10;
@@ -127,9 +128,9 @@ function adding_headers(binary_array){
 
     for (let i = 0; i < chunks_num; i++){
         const seq_header = i.toString(2).padStart(10,0).split('').map(Number);
-        if (i != (chunks_num - 1)){
-            const data_chunk = binary_array.slice(0,data_bits);
-
+        if (i !== (chunks_num - 1)){
+            //const data_chunk = binary_array.slice(0,data_bits);
+            const data_chunk = binary_array.slice(i*data_bits, i*data_bits + data_bits);
             chunks_array.push([...seq_header, ...full_data_length_in_bin, ...data_chunk]);
         }
         else{
@@ -144,6 +145,40 @@ function adding_headers(binary_array){
     return chunks_array;
 }
 
+
+ */
+
+function adding_headers(binary_array){
+    const sequence_number_h_bits = 10;
+    const data_length_h_bits = 10;
+    const data_bits = 980;
+    const full_data_length_in_bin = data_bits.toString(2).padStart(10,0).split('').map(Number);
+
+    const chunks_num = Math.ceil(binary_array.length/980);
+
+    let chunks_array = [];
+
+    for (let i = 0; i < chunks_num; i++){
+        const seq_header = i.toString(2).padStart(10,0).split('').map(Number);
+        if (i != (chunks_num - 1)){
+
+            const data_chunk = binary_array.slice(i*data_bits, i*data_bits + data_bits);
+
+            chunks_array.push([...seq_header, ...full_data_length_in_bin, ...data_chunk]);
+        }
+        else{
+            const last_chunk_first_index = i*980;
+            const last_chunk_data_length_in_bin = (binary_array.length - last_chunk_first_index).toString(2).padStart(10,0).split('').map(Number);
+            //console.log(last_chunk_data_length_in_bin);
+
+            const data_chunk = binary_array.slice(last_chunk_first_index, binary_array.length);
+            const ones_padding = new Array(980 - data_chunk.length).fill(1);;
+
+            chunks_array.push([...seq_header, ...last_chunk_data_length_in_bin, ...data_chunk, ...ones_padding]);
+        }
+    }
+    return chunks_array;
+}
 function ID_generator(){
     let ID_array = []
     let rand_number = 0;

@@ -22,8 +22,10 @@ const MyModal = (props) => {
     const handleSendClick = (e) => {
         e.preventDefault();
         const [m_id,chunks] = encode(messageContent);
+        console.log(chunks)
         apiClient.post("pub", chunks[0])
             .then( (res) => {
+                console.log(res)
                 publishedAt = new Date(res.data);
                 sendChunks(chunks.slice(1),m_id);
             })
@@ -69,7 +71,7 @@ const MyModal = (props) => {
 
                 <Form.Group className="mb-3" controlId="Form.ControlInput1">
                     <Form.Label>Message Content</Form.Label>
-                    <Form.Control as="textarea" aria-label="" value={messageContent}
+                    <Form.Control as="textarea" aria-label="" rows="12" value={messageContent}
                                   onChange={e => setMessageContent(e.target.value)}/>
                     <Form.Text id="passwordHelpBlock" muted>
                         <div style={{color: 'red'}}>

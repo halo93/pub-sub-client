@@ -1,7 +1,14 @@
 import {useEffect} from "react";
 import {convertToTimestampToLocaleString} from "../helper/Helper";
+import { Link } from 'react-router-dom';
+
 
 const Table = ({ data, isSentTable }) => {
+
+    const moreClicked = (e) =>{
+        e.preventDefault();
+        console.log("clicked")
+    }
 
     useEffect(() => {
 
@@ -23,7 +30,8 @@ const Table = ({ data, isSentTable }) => {
                         {data.map((message, i) => (
                             <tr key={`msg-${i}`}>
                                 <th scope="row">{message.id}</th>
-                                <td>{message.content}</td>
+
+                                {message.content.length>500 ? <td>{message.content.slice(0,500)} <a href="#" onClick={moreClicked}>...More</a></td> : <td>{message.content}</td>}
                                 <td>{convertToTimestampToLocaleString(message.createdAt)}</td>
                             </tr>
                         ))}
