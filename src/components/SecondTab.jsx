@@ -28,7 +28,7 @@ const SecondTab = ({ clean }) => {
     const handleClick = () => {
 
         if(!messageId){
-            setErrorMessage("message id is required!")
+            setErrorMessage("Message id is required!")
             return;
         }
 
@@ -49,7 +49,7 @@ const SecondTab = ({ clean }) => {
                 console.log(decoded_message)
 
             })
-            .catch(error => {setErrorMessage("Network Error: Receiving message failed.")});
+            .catch(error => {setErrorMessage("Receiving message failed.")});
 
 
     }
