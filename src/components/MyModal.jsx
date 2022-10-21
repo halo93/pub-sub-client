@@ -3,22 +3,41 @@ import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import React from 'react';
-import {send_dummy} from '../helper/Helper'
-function MyModal(props) {
+import {encode} from '../helper/Helper'
+import axios from 'axios';
+import { useState, useEffect } from "react";
 
-    const [messageContent,setMessageContent] = React.useState("");
-    const [errorMessage,setErrorMessage] = React.useState("");
-    const handleSendClick = () => {
-        console.log("handle click catched");
-        let result = send_dummy(messageContent);
-        if(result.status === 200){
-            props.onHide();
-        }
-        else{
-            setErrorMessage(result.message);
-        }
+const MyModal = (props) => {
+
+    const [messageContent,setMessageContent] = useState("");
+    const [errorMessage,setErrorMessage] = useState("");
+
+
+    const handleSendClick = (e) => {
+        e.preventDefault();
+        const [m_id,chunks] = encode(messageContent);
+        sendChunks(chunks,m_id);
+    }
+
+    const sendChunks = (chunks,m_id) => {
+         Promise.all(chunks.map((chunk) =>
+             axios.get('https://reqres.in/api/users?page=2')
+         ))
+             .then(
+                 (res) => {
+                     props.set_table((prevData)=> {return [...prevData,{id:m_id.slice(0,10).join(),content:messageContent,createdAt:Date.now()}]})
+                     console.log("full message id:")
+                     console.log(m_id)
+
+                     props.onHide();
+                 }
+             )
+             .catch(error => {
+                 setErrorMessage("Network Error: Sending message failed.")
+             });
 
     }
+
     return (
         <Modal
             {...props}
@@ -47,6 +66,7 @@ function MyModal(props) {
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={handleSendClick}>Send</Button>
+
             </Modal.Footer>
         </Modal>
     );
