@@ -21,6 +21,10 @@ const MyModal = (props) => {
 
     const handleSendClick = (e) => {
         e.preventDefault();
+        if(!messageContent){
+            setErrorMessage("Message content is required!");
+            return;
+        }
         const [m_id,chunks] = encode(messageContent);
         console.log(chunks)
         apiClient.post("pub", chunks[0])
@@ -30,7 +34,7 @@ const MyModal = (props) => {
                 sendChunks(chunks.slice(1),m_id);
             })
             .catch(error => {
-                setErrorMessage("Network Error: Sending message failed.")
+                setErrorMessage("Sending message failed.")
             });
         //sendChunks(chunks,m_id);
     }
@@ -48,6 +52,8 @@ const MyModal = (props) => {
                      console.log("full message id:")
                      console.log(m_id)
                      props.onHide();
+                     setMessageContent("");
+                     setErrorMessage("");
                  }
              )
              .catch(error => {
@@ -71,7 +77,7 @@ const MyModal = (props) => {
 
                 <Form.Group className="mb-3" controlId="Form.ControlInput1">
                     <Form.Label>Message Content</Form.Label>
-                    <Form.Control as="textarea" aria-label="" rows="12" value={messageContent}
+                    <Form.Control  required as="textarea" aria-label="" rows="12" value={messageContent}
                                   onChange={e => setMessageContent(e.target.value)}/>
                     <Form.Text id="passwordHelpBlock" muted>
                         <div style={{color: 'red'}}>

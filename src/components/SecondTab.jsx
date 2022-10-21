@@ -7,6 +7,8 @@ import Button from 'react-bootstrap/Button';
 import {decode} from '../helper/Helper'
 import { useState, useEffect } from "react";
 import apiClient from "../http-common";
+
+
 const SecondTab = ({ clean }) => {
     const [tableData2, setTableData2] = useState(() => {
         // getting stored value
@@ -15,16 +17,26 @@ const SecondTab = ({ clean }) => {
         return initialValue || [];
     });
 
+    const [messageId,setMessageId] = React.useState("");
+    const [errorMessage,setErrorMessage] = React.useState("");
+
 
     useEffect(() => {
         sessionStorage.setItem("td2", JSON.stringify(tableData2));
     }, [tableData2]);
 
     const handleClick = () => {
+
+        if(!messageId){
+            setErrorMessage("message id is required!")
+            return;
+        }
+
         let message_id_array = messageId.replace("[","").replace("]","").split(',').map(Number);
 
         apiClient.get("sub",{params:{id:messageId}}).then(res => {
                 //modify here
+
                 console.log(res)
                 let decoded_message = decode(res.data,message_id_array)
                 setTableData2((prevData) => [...prevData,{
@@ -33,12 +45,15 @@ const SecondTab = ({ clean }) => {
                     createdAt: Date.now()
                 }])
                 setMessageId("");
+                setErrorMessage("");
                 console.log(decoded_message)
+
             })
             .catch(error => {setErrorMessage("Network Error: Receiving message failed.")});
+
+
     }
-    const [messageId,setMessageId] = React.useState("");
-    const [errorMessage,setErrorMessage] = React.useState("");
+
 
     // useEffect(() => {
     //     if (clean) {
@@ -53,7 +68,7 @@ const SecondTab = ({ clean }) => {
 
             <Form.Group className="mb-3" controlId="Form.ControlInput1">
                 <Form.Label>Message ID</Form.Label>
-                <Form.Control as="textarea" aria-label="" value={messageId} rows="10" placeholder="Paste message ID here"
+                <Form.Control required as="textarea" aria-label="" value={messageId} rows="10" placeholder="Paste message ID here"
                               onChange={e => setMessageId(e.target.value)}/>
                 <Form.Text id="passwordHelpBlock" muted>
                     <div style={{color: 'red'}}>
