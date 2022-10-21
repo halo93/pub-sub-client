@@ -6,36 +6,51 @@ import React from 'react';
 import {encode} from '../helper/Helper'
 import axios from 'axios';
 import { useState, useEffect } from "react";
+import apiClient from "../http-common";
+
+
+
 
 const MyModal = (props) => {
 
     const [messageContent,setMessageContent] = useState("");
     const [errorMessage,setErrorMessage] = useState("");
 
+    let publishedAt;
+
 
     const handleSendClick = (e) => {
         e.preventDefault();
         const [m_id,chunks] = encode(messageContent);
-        sendChunks(chunks,m_id);
+        apiClient.post("pub", chunks[0])
+            .then( (res) => {
+                publishedAt = new Date(res.data);
+                sendChunks(chunks.slice(1),m_id);
+            })
+            .catch(error => {
+                setErrorMessage("Network Error: Sending message failed.")
+            });
+        //sendChunks(chunks,m_id);
     }
 
+
     const sendChunks = (chunks,m_id) => {
+
+
          Promise.all(chunks.map((chunk) =>
-             axios.get('https://reqres.in/api/users?page=2')
-         ))
+             apiClient.post("pub", chunk)))
              .then(
                  (res) => {
-                     props.set_table((prevData)=> {return [...prevData,{id:m_id.slice(0,10).join(),content:messageContent,createdAt:Date.now()}]})
+                     console.log(res)
+                     props.set_table((prevData)=> {return [...prevData,{id:m_id.slice(0,10).join(),content:messageContent,createdAt:publishedAt}]})
                      console.log("full message id:")
                      console.log(m_id)
-
                      props.onHide();
                  }
              )
              .catch(error => {
                  setErrorMessage("Network Error: Sending message failed.")
              });
-
     }
 
     return (

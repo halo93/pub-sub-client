@@ -10,7 +10,8 @@ const Table = ({ data, isSentTable }) => {
     return (
         <div>
             {data && data.length > 0 ? (
-                <table className="table table-striped">
+                <table className="table table-striped" style={{tableLayout: "fixed",
+                    wordWrap: "break-word"}}>
                     <thead>
                     <tr>
                         <th scope="col">ID</th>

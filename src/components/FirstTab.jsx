@@ -1,6 +1,4 @@
 import Table from "./Table";
-// import {useEffect} from "react";
-import {encode} from '../helper/Helper'
 import Button from 'react-bootstrap/Button';
 import React from 'react';
 import MyModal from "./MyModal";
@@ -10,17 +8,11 @@ import { useState, useEffect } from "react";
 
 
 const FirstTab = ({ clean }) => {
-
-    console.log("Occurs EVERY time the component is invoked.");
-
-
     const [tableData, setTableData] = useState(() => {
-        // getting stored value
         const saved = sessionStorage.getItem("td");
         const initialValue = JSON.parse(saved);
         return initialValue || [];
     });
-
 
     useEffect(() => {
         sessionStorage.setItem("td", JSON.stringify(tableData));
@@ -31,7 +23,6 @@ const FirstTab = ({ clean }) => {
     //     //
     //     // }
     // }, [mockedData]);
-
 
 
     const [modalShow, setModalShow] = React.useState(false);
@@ -46,7 +37,6 @@ const FirstTab = ({ clean }) => {
                 <Button variant="primary" onClick={() => setModalShow(true)}>
                     Publish Message
                 </Button>
-
             </div>
 
             <MyModal
