@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import apiClient from "../http-common";
 import Tooltip from 'react-bootstrap/Tooltip';
 import {Overlay} from "react-bootstrap";
+import Base64Downloader from "react-base64-downloader";
 
 
 
@@ -42,11 +43,15 @@ const ShowMoreModal = (props) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    {props.isMsgIdModal ? "Message ID":"Message Content"}
+                    {props.isImg?("Image"):
+                    props.isMsgIdModal ? "Message ID":"Message Content"}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p style={{wordWrap: "break-word"}}>{props.message }</p>
+                {props.isImg ?
+                    <img style={{height: "300px"}} src={props.message} alt="Red dot" /> :
+                    <p style={{wordWrap: "break-word"}}>{props.message}</p>
+                }
             </Modal.Body>
             <Modal.Footer>
                 <Tooltip placement="left" isOpen={isOpen} target="btn_copy"/>
@@ -69,6 +74,13 @@ const ShowMoreModal = (props) => {
                         </Overlay>
                     </>
                 ) : null}
+                {props.isImg ?
+                    <Base64Downloader base64={props.message} downloadName="downloaded_file">
+                        Download
+                    </Base64Downloader>
+                    :null
+
+                }
 
 
             </Modal.Footer>
