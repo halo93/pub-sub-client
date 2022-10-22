@@ -15,23 +15,63 @@ const MyModal = (props) => {
 
     const [messageContent,setMessageContent] = useState("");
     const [errorMessage,setErrorMessage] = useState("");
+    const [base64, setBase64] = useState(false);
 
     let publishedAt;
 
 
+
+    const convertBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file)
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            }
+            fileReader.onerror = (error) => {
+                reject(error);
+            }
+        })
+    }
+
+    const handleFileRead = async (event) => {
+        const file = event.target.files[0]
+        const b64 = await convertBase64(file)
+        setBase64(b64);
+        console.log(b64)
+    }
+
+
+
     const handleSendClick = (e) => {
         e.preventDefault();
-        if(!messageContent){
+        if(!messageContent && !base64){
             setErrorMessage("Message content is required!");
             return;
         }
-        const [m_id,chunks] = encode(messageContent);
+        let m_id,chunks;
+        if(base64){
+            console.log("is a file");
+            [m_id,chunks] = encode(base64);
+        }
+        else{
+            [m_id,chunks] = encode(messageContent);
+        }
         console.log(chunks)
         apiClient.post("pub", chunks[0])
             .then( (res) => {
                 console.log(res)
                 publishedAt = new Date(res.data);
-                sendChunks(chunks.slice(1),m_id);
+                if(chunks.length>1) {
+                    sendChunks(chunks.slice(1), m_id);
+                }
+                else{
+                    props.set_table((prevData)=> {return [...prevData,{id:m_id.join(","),content:(base64?base64:messageContent),createdAt:publishedAt}]})
+                    props.onHide();
+                    setMessageContent("");
+                    setErrorMessage("");
+                    setBase64(false);
+                }
             })
             .catch(error => {
                 setErrorMessage("Sending message failed.")
@@ -48,12 +88,11 @@ const MyModal = (props) => {
              .then(
                  (res) => {
                      console.log(res)
-                     props.set_table((prevData)=> {return [...prevData,{id:m_id.slice(0,10).join(),content:messageContent,createdAt:publishedAt}]})
-                     console.log("full message id:")
-                     console.log(m_id)
+                     props.set_table((prevData)=> {return [...prevData,{id:m_id.join(","),content:(base64?base64:messageContent),createdAt:publishedAt}]})
                      props.onHide();
                      setMessageContent("");
                      setErrorMessage("");
+                     setBase64(false);
                  }
              )
              .catch(error => {
@@ -80,9 +119,21 @@ const MyModal = (props) => {
                     <Form.Control  required as="textarea" aria-label="" rows="12" value={messageContent}
                                   onChange={e => setMessageContent(e.target.value)}/>
                     <Form.Text id="passwordHelpBlock" muted>
+
+                        <input id="originalFileName"
+                               type="file"
+                               inputProps={{ accept: 'image/*, .xlsx, .xls, .csv, .pdf, .pptx, .pptm, .ppt , .txt' }}
+                               required
+                               label="Document"
+                               name="originalFileName"
+                               onChange={e => handleFileRead(e)}
+                               size="small"
+                               variant="standard" />
+
                         <div style={{color: 'red'}}>
                             {errorMessage}
                         </div>
+
                     </Form.Text>
                 </Form.Group>
 

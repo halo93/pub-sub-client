@@ -40,7 +40,7 @@ const SecondTab = ({ clean }) => {
                 console.log(res)
                 let decoded_message = decode(res.data,message_id_array)
                 setTableData2((prevData) => [...prevData,{
-                    id: message_id_array.slice(0,10).toString(),
+                    id: message_id_array.join(","),
                     content: decoded_message,
                     createdAt: Date.now()
                 }])
