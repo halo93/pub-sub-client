@@ -51,12 +51,13 @@ const MyModal = (props) => {
         }
         let m_id,chunks;
         if(base64){
-            console.log("is a file");
-            [m_id,chunks] = encode(base64);
+            console.log("together");
+            [m_id,chunks] = encode(messageContent+base64);
         }
         else{
             [m_id,chunks] = encode(messageContent);
         }
+
         console.log(chunks)
         apiClient.post("pub", chunks[0])
             .then( (res) => {
@@ -66,7 +67,7 @@ const MyModal = (props) => {
                     sendChunks(chunks.slice(1), m_id);
                 }
                 else{
-                    props.set_table((prevData)=> {return [...prevData,{id:m_id.join(","),content:(base64?base64:messageContent),createdAt:publishedAt}]})
+                    props.set_table((prevData)=> {return [...prevData,{id:m_id.join(","),content:(base64?(messageContent+base64):messageContent),createdAt:publishedAt}]})
                     props.onHide();
                     setMessageContent("");
                     setErrorMessage("");
@@ -88,7 +89,7 @@ const MyModal = (props) => {
              .then(
                  (res) => {
                      console.log(res)
-                     props.set_table((prevData)=> {return [...prevData,{id:m_id.join(","),content:(base64?base64:messageContent),createdAt:publishedAt}]})
+                     props.set_table((prevData)=> {return [...prevData,{id:m_id.join(","),content:(base64?messageContent+base64:messageContent),createdAt:publishedAt}]})
                      props.onHide();
                      setMessageContent("");
                      setErrorMessage("");

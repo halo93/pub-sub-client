@@ -55,9 +55,12 @@ const Table = ({ data, isSentTable }) => {
                                     <tr key={`msg-${i}`}>
                                         {message.id.length>25 ? <th>{message.id.slice(0,25)} <a href="#" onClick={(e) => moreClicked(e,message.id,true,false)}>...More</a> </th> : <th>{message.id}</th>}
 
-                                        {message.content.startsWith("data:")?
+                                        {message.content.includes("data:") && message.content.includes(";base64")?
 
-                                            (<div style={{margin:"5px"}}> <img style={{height: "50px",borderStyle: "solid", borderWidth: "2px"}} src={message.content} alt="Red dot" onClick={(e) => moreClicked(e,message.content,false,true)} /> </div>)
+                                            (<div>
+                                                {message.content.split("data:")[0].length>500 ? <td>{message.content.split("data:")[0].slice(0,500)} <a href="#" onClick={(e) => moreClicked(e,message.content.split("data:")[0],false,false)}>...More</a></td> : <td>{message.content.split("data:")[0]}</td> }
+                                                    <div style={{margin:"5px",marginLeft:"10px"}}> <img style={{height: "50px",borderStyle: "solid", borderWidth: "2px"}} src={"data:"+message.content.split("data:")[1]} alt="Red dot" onClick={(e) => moreClicked(e,"data:"+message.content.split("data:")[1],false,true)} /> </div>
+                                            </div>)
                                             :
                                             (message.content.length>500 ? <td>{message.content.slice(0,500)} <a href="#" onClick={(e) => moreClicked(e,message.content,false,false)}>...More</a></td> : <td>{message.content}</td>) }
 
