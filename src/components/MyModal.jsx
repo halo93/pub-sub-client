@@ -87,8 +87,6 @@ const MyModal = (props) => {
     }
 
     const sendChunks = (chunks,m_id) => {
-
-
          Promise.all(chunks.map((chunk) =>
              apiClient.post("pub", chunk)))
              .then(
@@ -99,10 +97,12 @@ const MyModal = (props) => {
                      setMessageContent("");
                      setErrorMessage("");
                      setBase64(false);
+                     setIsSending(false);
                  }
              )
              .catch(error => {
-                 setErrorMessage("Network Error: Sending message failed.")
+                 setErrorMessage("Network Error: Sending message failed.");
+                 setIsSending(false);
              });
     }
 
