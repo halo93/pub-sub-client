@@ -12,7 +12,7 @@ const MyModal = (props) => {
 
     const [messageContent,setMessageContent] = useState("");
     const [errorMessage,setErrorMessage] = useState("");
-    const [base64, setBase64] = useState(false);
+    const [base64, setBase64] = useState("");
     const [isSending, setIsSending] = useState(false);
 
     let publishedAt;
@@ -32,15 +32,22 @@ const MyModal = (props) => {
 
     const handleFileRead = async (event) => {
         const file = event.target.files[0]
-        console.log(file.length);
+        if (file.size > 3072) {
+            setErrorMessage("The maximum file size is 3KB. Please change your image with a more suitable one!");
+            setBase64("");
+            event.target.value = null;
+            return;
+        }
         const b64 = await convertBase64(file)
         setBase64(b64);
+        setErrorMessage("");
         console.log(b64)
     }
 
     const handleSendClick = (e) => {
         e.preventDefault();
         setIsSending(true);
+        console.log("Base64: ",base64);
         if(!messageContent && !base64){
             setErrorMessage("Message content is required!");
             setIsSending(false);
@@ -67,7 +74,7 @@ const MyModal = (props) => {
                     props.onHide();
                     setMessageContent("");
                     setErrorMessage("");
-                    setBase64(false);
+                    setBase64("");
                     setIsSending(false);
                 }
             })
@@ -82,7 +89,7 @@ const MyModal = (props) => {
         props.onHide();
         setMessageContent("");
         setErrorMessage("");
-        setBase64(false);
+        setBase64("");
         setIsSending(false);
     }
 
@@ -96,7 +103,7 @@ const MyModal = (props) => {
                      props.onHide();
                      setMessageContent("");
                      setErrorMessage("");
-                     setBase64(false);
+                     setBase64("");
                      setIsSending(false);
                  }
              )
@@ -135,7 +142,7 @@ const MyModal = (props) => {
                                size="small"
                                variant="standard" />
                         <Form.Text color="muted">
-                            The maximum file size is 2KB. Only image types are supported
+                            The maximum file size is 3KB. Only image types are supported
                         </Form.Text>
                         <div style={{color: 'red'}}>
                             {errorMessage}
