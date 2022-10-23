@@ -20,9 +20,10 @@ const ShowMoreModal = (props) => {
     const [isOpen,setIsOpen] = useState(false);
     const target = useRef(null);
 
-    const handleCopyClick = () =>{
+    const handleCopyClick = async () => {
         console.log("Copy button clicked")
-        navigator.clipboard.writeText(props.message)
+        console.log("PROPS MSG: ", props.message)
+        await navigator.clipboard.writeText(props.message)
         setIsOpen(true)
     }
 
