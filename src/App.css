@@ -2,6 +2,10 @@
 /*  max-width: 600px;*/
 /*}*/
 
+body{
+    background: url('images/home-background.png') no-repeat fixed center center;
+}
+
 #preloader {
     position: fixed;
     top:0px;
@@ -23,4 +27,30 @@
     background-repeat:no-repeat;
     background-position:center;
     margin:-100px 0 0 -100px; /* is width and height divided by two */
+}
+
+.my-card-header {
+    text-align: center;
+    box-shadow: 0 20px #ccc;
+    border: 3px solid white;
+    padding: 5px;
+    border-radius: 4px 4px 0 0;
+    margin: 50px 300px 0;
+    color: #0a325e;
+    background-color: white;
+}
+
+footer{
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    padding: 10px;
+    background: rgba(202, 196, 196,.3);
+    box-shadow: 0px 4px #ccc;
+    color: #fff;
+    border-radius: 4px;
+}
+
+footer p{
+    margin-bottom: 0px;
 }

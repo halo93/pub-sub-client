@@ -1,12 +1,11 @@
-
 import Table from "./Table";
 import Form from 'react-bootstrap/Form';
 import React from 'react';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import {decode} from '../helper/Helper'
 import { useState, useEffect } from "react";
 import apiClient from "../http-common";
+import {Spinner} from "react-bootstrap";
 
 
 const SecondTab = ({ clean }) => {
@@ -19,16 +18,17 @@ const SecondTab = ({ clean }) => {
 
     const [messageId,setMessageId] = React.useState("");
     const [errorMessage,setErrorMessage] = React.useState("");
-
+    const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
         sessionStorage.setItem("td2", JSON.stringify(tableData2));
     }, [tableData2]);
 
     const handleClick = () => {
-
+        setIsSending(true);
         if(!messageId){
             setErrorMessage("Message id is required!")
+            setIsSending(false);
             return;
         }
 
@@ -46,20 +46,17 @@ const SecondTab = ({ clean }) => {
                 }])
                 setMessageId("");
                 setErrorMessage("");
+                setIsSending(false);
                 console.log(decoded_message)
 
             })
-            .catch(error => {setErrorMessage("Receiving message failed.")});
+            .catch(error => {
+                setErrorMessage("Receiving message failed.");
+                setIsSending(false);
+            });
 
 
     }
-
-
-    // useEffect(() => {
-    //     if (clean) {
-    //
-    //     }
-    // }, []);
 
     return (
         <div>
@@ -78,9 +75,36 @@ const SecondTab = ({ clean }) => {
 
             </Form.Group>
             <div className='text-right' style={{marginBottom: '10px',marginRight: '10px', textAlign:'right'}}>
-                <Button variant="primary" onClick={handleClick}>
-                    Receive
-                </Button>
+                {isSending ? (
+                    <Button variant="primary" disabled>
+                        <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        />
+                        <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        />
+                        <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        />
+                    </Button>
+                ) : (
+                    <Button variant="primary" onClick={handleClick}>
+                        Receive
+                    </Button>
+                )}
+
             </div>
 
             <h2 style={{ textAlign: 'center', margin: '0 auto', padding: '10px 10px 10px 10px' }}>Received Messages</h2>

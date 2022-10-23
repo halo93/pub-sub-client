@@ -1,25 +1,21 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
-import React from 'react';
+import React, {useState} from 'react';
 import {encode} from '../helper/Helper'
-import axios from 'axios';
-import { useState, useEffect } from "react";
 import apiClient from "../http-common";
-
-
-
+import {Spinner} from "react-bootstrap";
+import {faPaperPlane} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const MyModal = (props) => {
 
     const [messageContent,setMessageContent] = useState("");
     const [errorMessage,setErrorMessage] = useState("");
     const [base64, setBase64] = useState(false);
+    const [isSending, setIsSending] = useState(false);
 
     let publishedAt;
-
-
 
     const convertBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -36,17 +32,18 @@ const MyModal = (props) => {
 
     const handleFileRead = async (event) => {
         const file = event.target.files[0]
+        console.log(file.length);
         const b64 = await convertBase64(file)
         setBase64(b64);
         console.log(b64)
     }
 
-
-
     const handleSendClick = (e) => {
         e.preventDefault();
+        setIsSending(true);
         if(!messageContent && !base64){
             setErrorMessage("Message content is required!");
+            setIsSending(false);
             return;
         }
         let m_id,chunks;
@@ -57,7 +54,6 @@ const MyModal = (props) => {
         else{
             [m_id,chunks] = encode(messageContent);
         }
-
         console.log(chunks)
         apiClient.post("pub", chunks[0])
             .then( (res) => {
@@ -72,14 +68,23 @@ const MyModal = (props) => {
                     setMessageContent("");
                     setErrorMessage("");
                     setBase64(false);
+                    setIsSending(false);
                 }
             })
             .catch(error => {
                 setErrorMessage("Sending message failed.")
+                setIsSending(false);
             });
-        //sendChunks(chunks,m_id);
     }
 
+    const handleCloseClick = (e) => {
+        e.preventDefault();
+        props.onHide();
+        setMessageContent("");
+        setErrorMessage("");
+        setBase64(false);
+        setIsSending(false);
+    }
 
     const sendChunks = (chunks,m_id) => {
 
@@ -110,27 +115,28 @@ const MyModal = (props) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Publish Message
+                    <FontAwesomeIcon icon={faPaperPlane} /> Publish a Message
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-
                 <Form.Group className="mb-3" controlId="Form.ControlInput1">
                     <Form.Label>Message Content</Form.Label>
                     <Form.Control  required as="textarea" aria-label="" rows="12" value={messageContent}
                                   onChange={e => setMessageContent(e.target.value)}/>
                     <Form.Text id="passwordHelpBlock" muted>
-
-                        <input id="originalFileName"
+                        <Form.Control id="originalFileName"
                                type="file"
-                               inputProps={{ accept: 'image/*, .xlsx, .xls, .csv, .pdf, .pptx, .pptm, .ppt , .txt' }}
+                               inputProps={{ accept: 'image/*' }}
                                required
                                label="Document"
                                name="originalFileName"
                                onChange={e => handleFileRead(e)}
+                               style={{height: 'auto'}}
                                size="small"
                                variant="standard" />
-
+                        <Form.Text color="muted">
+                            The maximum file size is 2KB. Only image types are supported
+                        </Form.Text>
                         <div style={{color: 'red'}}>
                             {errorMessage}
                         </div>
@@ -140,8 +146,34 @@ const MyModal = (props) => {
 
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={handleSendClick}>Send</Button>
-
+                {isSending ? (
+                    <Button variant="primary" disabled>
+                        <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        />
+                        <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        />
+                        <Spinner
+                            as="span"
+                            animation="grow"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        />
+                    </Button>
+                ) : (
+                    <Button onClick={handleSendClick}>Send</Button>
+                )}
+                <Button className="btn btn-danger" onClick={handleCloseClick}>Cancel</Button>
             </Modal.Footer>
         </Modal>
     );
