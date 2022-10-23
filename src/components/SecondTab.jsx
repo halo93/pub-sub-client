@@ -63,7 +63,7 @@ const SecondTab = ({ clean }) => {
 
     return (
         <div>
-            <h3 style={{marginTop:"20px"}}><FontAwesomeIcon icon={faEnvelope} style={{marginRight:"3px"}} />Receive New Message</h3>
+            <h3 style={{marginTop:"20px"}}>Receive New Message <FontAwesomeIcon icon={faEnvelope} /></h3>
 
             <Form.Group className="mb-3" controlId="Form.ControlInput1">
                 <Form.Label>Message ID</Form.Label>
