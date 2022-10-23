@@ -20,9 +20,36 @@ const ShowMoreModal = (props) => {
     const [isOpen,setIsOpen] = useState(false);
     const target = useRef(null);
 
+    const copyToClipboard = () => {
+        // navigator clipboard api needs a secure context (https)
+        if (navigator.clipboard && window.isSecureContext) {
+            // navigator clipboard api method'
+            return navigator.clipboard.writeText(props.message);
+        } else {
+            // text area method
+                console.log("alternative method called")
+            let textArea = document.createElement("textarea");
+            textArea.value = props.message;
+            // make the textarea out of viewport
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            return new Promise((res, rej) => {
+                // here the magic happens
+                document.execCommand('copy') ? res() : rej();
+                textArea.remove();
+            });
+        }
+    }
+
+
     const handleCopyClick = () =>{
         console.log("Copy button clicked")
-        navigator.clipboard.writeText(props.message)
+            //navigator.clipboard.writeText(props.message)
+        copyToClipboard();
         setIsOpen(true)
     }
 
