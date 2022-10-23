@@ -1,3 +1,7 @@
+# Demo
+
+![](images/demo.mp4)
+
 # Run your own client
 
 ## On your machine
